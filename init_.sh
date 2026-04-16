@@ -49,4 +49,10 @@ for i in $(seq 0 4); do
     -p $HOST_PORT:8080 thor-session:v1.44
 done
 
-docker logs -f thor-session-1
+# Tail all session logs into one file
+LOG=~/thor-logs/sessions.log
+for i in $(seq 1 5); do
+  docker logs -f thor-session-$i >> $LOG 2>&1 &
+done
+
+tail -f $LOG
