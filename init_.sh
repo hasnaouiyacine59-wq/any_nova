@@ -9,7 +9,7 @@ docker rm -f $(docker ps -aq) 2>/dev/null || true
 docker rmi $(docker images -q) --force 2>/dev/null || true
 
 # Setup network and tor-proxy image
-docker network create tor-net
+docker network create tor-net 2>/dev/null || true
 docker pull quay.io/mylastres0rt05_redhat/nova_dromidia-proxy:latest
 docker tag quay.io/mylastres0rt05_redhat/nova_dromidia-proxy:latest tor-proxy
 
