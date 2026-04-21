@@ -44,7 +44,7 @@ for i in $(seq 0 4); do
   API=$((5000 + i))
   SESSION=$((i + 1))
   HOST_PORT=$((8080 + i))
-  docker run -d --restart=on-failure --name thor-session-$SESSION --hostname sec-$SESSION --network tor-net \
+  docker run -d --restart=on-failure --name thor-session-$SESSION --hostname $HOSTNAME-sec-$SESSION --network tor-net \
     -e SOCKS_PORT=$SOCKS -e API_PORT=$API -e TOR_HOST=tor-$SOCKS \
     -p $HOST_PORT:8080 thor-session:v1.44
 done
