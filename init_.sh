@@ -16,7 +16,7 @@ docker tag quay.io/mylastres0rt05_redhat/nova_dromidia-proxy:latest tor-proxy
 # Start tor-proxy containers
 echo "Starting tor-proxy containers..."
 # SOCKS ports: 9050,9052,9054,9056,9058  API ports: 5000-5004
-for i in $(seq 0 4); do
+for i in $(seq 0 3); do
   SOCKS=$((9050 + i * 2))
   CTRL=$((9051 + i * 2))
   API=$((5000 + i))
@@ -35,11 +35,17 @@ mkdir -p ~/thor-logs && touch ~/thor-logs/sessions.log
 
 # Wait for Tor bootstrap
 echo "Waiting for Tor to bootstrap..."
-until docker logs tor-9050 2>&1 | grep -q "Bootstrapped 100%"; do sleep 2; done
+# Wait for Tor bootstrap
+echo "Waiting for Tor to bootstrap..."
+for i in $(seq 0 3); do
+  SOCKS=$((9050 + i * 2))
+  until docker logs tor-$SOCKS 2>&1 | grep -q "Bootstrapped 100%"; do sleep 2; done
+  echo "tor-$SOCKS ready"
+done
 
 # Start thor-session containers
 echo "Starting thor-session containers..."
-for i in $(seq 0 4); do
+for i in $(seq 0 3); do
   SOCKS=$((9050 + i * 2))
   API=$((5000 + i))
   SESSION=$((i + 1))
@@ -51,7 +57,7 @@ done
 
 # Tail all session logs into one file
 LOG=~/thor-logs/sessions.log
-for i in $(seq 1 5); do
+for i in $(seq 1 4); do
   docker logs -f thor-session-$i >> $LOG 2>&1 &
 done
 
