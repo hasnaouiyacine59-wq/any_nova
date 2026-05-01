@@ -42,6 +42,7 @@ for i in $(seq 0 3); do
   until docker logs tor-$SOCKS 2>&1 | grep -q "Bootstrapped 100%"; do sleep 2; done
   echo "tor-$SOCKS ready"
 done
+RAND=$(cat /dev/urandom | tr -dc 'a-z' | head -c2)$(cat /dev/urandom | tr -dc '0-9' | head -c2)
 
 # Start thor-session containers
 echo "Starting thor-session containers..."
@@ -50,7 +51,7 @@ for i in $(seq 0 3); do
   API=$((5000 + i))
   SESSION=$((i + 1))
   HOST_PORT=$((8080 + i))
-  docker run -d --restart=on-failure --name thor-session-$SESSION --hostname $HOSTNAME-sec-$SESSION --network tor-net \
+  docker run -d --restart=on-failure --name thor-session-$SESSION --hostname ${RAND:0:2}-${RAND:2:2}-sec-$HOSTNAME-sec-$SESSION --network tor-net \
     -e SOCKS_PORT=$SOCKS -e API_PORT=$API -e TOR_HOST=tor-$SOCKS \
     -p $HOST_PORT:8080 thor-session:v1.44
 done
