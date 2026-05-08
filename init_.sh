@@ -16,7 +16,7 @@ docker tag quay.io/mylastres0rt05_redhat/nova_dromidia-proxy:latest tor-proxy
 # Start tor-proxy containers
 echo "Starting tor-proxy containers..."
 # SOCKS ports: 9050,9052,9054,9056,9058  API ports: 5000-5004
-for i in $(seq 0 3); do
+for i in $(seq 0 5); do
   SOCKS=$((9050 + i * 2))
   CTRL=$((9051 + i * 2))
   API=$((5000 + i))
@@ -37,7 +37,7 @@ mkdir -p ~/thor-logs && touch ~/thor-logs/sessions.log
 echo "Waiting for Tor to bootstrap..."
 # Wait for Tor bootstrap
 echo "Waiting for Tor to bootstrap..."
-for i in $(seq 0 3); do
+for i in $(seq 0 5); do
   SOCKS=$((9050 + i * 2))
   until docker logs tor-$SOCKS 2>&1 | grep -q "Bootstrapped 100%"; do sleep 2; done
   echo "tor-$SOCKS ready"
@@ -48,7 +48,7 @@ RAND2=$(echo "$RAND" | cut -c3-4)
 
 # Start thor-session containers
 echo "Starting thor-session containers..."
-for i in $(seq 0 3); do
+for i in $(seq 0 5); do
   SOCKS=$((9050 + i * 2))
   API=$((5000 + i))
   SESSION=$((i + 1))
